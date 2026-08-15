@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Générateur de devis &amp; factures — Générateur de devis</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="topbar no-print">
+    <div>
+      <div class="topbar-eyebrow">Outil interne</div>
+      <h1>Générateur de devis &amp; factures</h1>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="btn btn-ghost" id="btnExample">Charger l'exemple</button>
+      <button type="button" class="btn btn-ghost" id="btnReset">Réinitialiser</button>
+    </div>
+  </div>
+
+  <div class="app-shell">
+
+    <!-- ========================= FORM ========================= -->
+    <section class="form-panel no-print" id="formPanel">
+
+      <div class="group">
+        <div class="group-title">Type &amp; références</div>
+        <div class="field">
+          <label for="f-docType">Type de document</label>
+          <select id="f-docType" data-path="docType">
+            <option value="DEVIS">Devis</option>
+            <option value="FACTURE">Facture</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-numero">Numéro</label>
+            <input type="text" id="f-numero" data-path="numero" placeholder="2026-ESPCI-ME-003">
+          </div>
+          <div class="field">
+            <label for="f-date">Date d'émission</label>
+            <input type="date" id="f-date" data-path="dateEmission">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-validite">Validité (mois, devis uniquement)</label>
+          <input type="number" step="1" min="0" id="f-validite" data-path="validiteMois" data-type="number">
+        </div>
+        <div class="field">
+          <label for="f-reference">Référence à rappeler sur la facture</label>
+          <input type="text" id="f-reference" data-path="reference">
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Émetteur (votre structure)</div>
+        <div class="field">
+          <label for="f-em-nom">Nom complet</label>
+          <input type="text" id="f-em-nom" data-path="emetteur.nom">
+        </div>
+        <div class="field">
+          <label for="f-em-nomcourt">Nom court <span class="hint-text">(utilisé en pied de page)</span></label>
+          <input type="text" id="f-em-nomcourt" data-path="emetteur.nomCourt">
+        </div>
+        <div class="field">
+          <label for="f-em-contact">Contact(s)</label>
+          <input type="text" id="f-em-contact" data-path="emetteur.contact">
+        </div>
+        <div class="field">
+          <label for="f-em-adresse">Adresse</label>
+          <textarea id="f-em-adresse" data-path="emetteur.adresse" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="f-em-tel">Téléphone</label>
+          <input type="text" id="f-em-tel" data-path="emetteur.tel">
+        </div>
+        <div class="field">
+          <label for="f-em-email">Email(s) <span class="hint-text">(un par ligne)</span></label>
+          <textarea id="f-em-email" data-path="emetteur.email" rows="2"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-em-siret">SIRET</label>
+            <input type="text" id="f-em-siret" data-path="emetteur.siret">
+          </div>
+          <div class="field">
+            <label for="f-em-ape">Code APE</label>
+            <input type="text" id="f-em-ape" data-path="emetteur.apeCode">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-em-tva">N° TVA intracommunautaire</label>
+          <input type="text" id="f-em-tva" data-path="emetteur.tvaIntra">
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Destinataire (client)</div>
+        <div class="field">
+          <label for="f-dest-nom">Nom de l'entreprise / du client</label>
+          <input type="text" id="f-dest-nom" data-path="destinataire.nom">
+        </div>
+        <div class="field">
+          <label for="f-dest-adresse">Adresse <span class="hint-text">(optionnel)</span></label>
+          <textarea id="f-dest-adresse" data-path="destinataire.adresse" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Objet</div>
+        <div class="field">
+          <textarea id="f-objet" data-path="objet" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Lignes de prestation</div>
+        <div class="lines-editor" id="linesEditor"></div>
+        <button type="button" class="btn btn-outline btn-add-line" id="btnAddLine">+ Ajouter une ligne</button>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Frais &amp; TVA</div>
+        <div class="field">
+          <label for="f-frais-label">Libellé du frais de gestion</label>
+          <input type="text" id="f-frais-label" data-path="fraisGestionLabel">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-frais-pct">Frais de gestion (%)</label>
+            <input type="number" step="0.01" min="0" id="f-frais-pct" data-path="fraisGestionPct" data-type="number">
+          </div>
+          <div class="field">
+            <label for="f-tva-pct">Taux de TVA (%)</label>
+            <input type="number" step="0.01" min="0" id="f-tva-pct" data-path="tvaPct" data-type="number">
+          </div>
+        </div>
+        <div class="recap" id="recapBox">
+          <div class="recap-row"><span>Total HT</span><strong id="recapHT">0,00 €</strong></div>
+          <div class="recap-row"><span>Frais de gestion</span><strong id="recapFrais">0,00 €</strong></div>
+          <div class="recap-row"><span>Total HT + frais</span><strong id="recapHTFrais">0,00 €</strong></div>
+          <div class="recap-row"><span>TVA</span><strong id="recapTVA">0,00 €</strong></div>
+          <div class="recap-row grand"><span>Total TTC</span><strong id="recapTTC">0,00 €</strong></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Conditions de règlement</div>
+        <div class="field">
+          <textarea id="f-conditions" data-path="conditionsReglement" rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Coordonnées bancaires</div>
+        <div class="field checkbox-field">
+          <input type="checkbox" id="f-afficher-banque" data-path="afficherCoordBancaires">
+          <label for="f-afficher-banque">Afficher les coordonnées bancaires sur le document</label>
+        </div>
+        <div class="field">
+          <label for="f-cb-titulaire">Titulaire du compte</label>
+          <input type="text" id="f-cb-titulaire" data-path="coordBancaires.titulaire">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-cb-domiciliation">Domiciliation</label>
+            <input type="text" id="f-cb-domiciliation" data-path="coordBancaires.domiciliation">
+          </div>
+          <div class="field">
+            <label for="f-cb-banque">Code banque</label>
+            <input type="text" id="f-cb-banque" data-path="coordBancaires.codeBanque">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-cb-guichet">Code guichet</label>
+            <input type="text" id="f-cb-guichet" data-path="coordBancaires.codeGuichet">
+          </div>
+          <div class="field">
+            <label for="f-cb-cle">Clé RIB</label>
+            <input type="text" id="f-cb-cle" data-path="coordBancaires.cleRib">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-cb-compte">N° de compte</label>
+          <input type="text" id="f-cb-compte" data-path="coordBancaires.numeroCompte">
+        </div>
+        <div class="field">
+          <label for="f-cb-iban">IBAN</label>
+          <input type="text" id="f-cb-iban" data-path="coordBancaires.iban">
+        </div>
+        <div class="field">
+          <label for="f-cb-bic">BIC</label>
+          <input type="text" id="f-cb-bic" data-path="coordBancaires.bic">
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Mentions complémentaires</div>
+        <div class="field">
+          <textarea id="f-notes" data-path="notes" rows="3" placeholder="Ex. : pénalités de retard, indemnité forfaitaire de recouvrement (facture uniquement)…"></textarea>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================= PREVIEW ========================= -->
+    <section class="preview-panel">
+      <div class="preview-toolbar no-print">
+        <button type="button" class="btn btn-primary" id="btnPdf">🖨️ Télécharger en PDF</button>
+        <p class="hint">La fenêtre d'impression s'ouvre : choisissez « Enregistrer au format PDF » comme destination, puis « Enregistrer ».</p>
+      </div>
+      <div class="paper" id="paper"></div>
+    </section>
+
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
